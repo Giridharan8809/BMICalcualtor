@@ -5,5 +5,5 @@
     <string name="BMI">Body Mass Index Calculator</string>
     <string name="bt">Calculate</string>
     <string name="status">Status</string>
-    <string name="the_bmi_is">The BMI is</string>
+    <string name="the_bmi_is">The BMI is </string>
 </resources>

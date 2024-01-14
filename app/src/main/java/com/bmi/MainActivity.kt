@@ -1,6 +1,9 @@
 package com.bmi
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -12,95 +15,121 @@ import com.bmi.R.*
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var calculate_btn : Button
+    lateinit var calculateBtn : Button
     lateinit var status : TextView
+    lateinit var name : EditText
     lateinit var etHeight : EditText
     lateinit var etWeight : EditText
     lateinit var im : ImageView
-    lateinit var ReCalculate : Button
-    lateinit var bmi_tv : TextView
+    private lateinit var reCalculate : Button
+    private lateinit var bmiTv : TextView
     lateinit var bmi : TextView
+    lateinit var reset : Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layout.activity_main)
 
-        calculate_btn=findViewById(id.calculate_btn)
+
+        calculateBtn=findViewById(id.calculate_btn)
         status=findViewById(id.status)
         etHeight=findViewById(id.Height)
         etWeight=findViewById(id.Weight)
-        ReCalculate=findViewById(id.ReCalculate)
-        bmi_tv=findViewById(id.bmi_tv)
+        reCalculate=findViewById(id.ReCalculate)
+        bmiTv=findViewById(id.bmi_tv)
         bmi=findViewById(id.bmi)
         im= findViewById(id.im)
-        calculate_btn.setOnClickListener {
+        reset = findViewById(id.Reset)
 
-
-
-            if (etHeight.text.isNotEmpty() && etWeight.text.isNotEmpty()) {
-                val height = (etHeight.text.toString()).toInt()
-                val weight = (etWeight.text.toString()).toInt()
-
-                val BMI = calculateBMI(height, weight)
-
-                bmi.text = BMI.toString()
-                bmi.visibility = View.VISIBLE
-
-                if (BMI < 18.5) {
-                    status.text = "Under Weight"
-                    im.setImageResource(R.drawable.lean)
-
-                } else if (BMI >= 18.5 && BMI < 24.9) {
-                    status.text = "Healthy"
-                    im.setImageResource(R.drawable.healthy)
-
-                } else if (BMI >= 24.9 && BMI < 30) {
-                    status.text = "Overweight"
-                    im.setImageResource(R.drawable.overweight)
-
-                } else if (BMI >= 30) {
-                    im.setImageResource(R.drawable.obisity)
-                    status.text = "Suffering from Obesity"
-
-                }
-
-                im.visibility = View.VISIBLE
-                bmi_tv.visibility = View.VISIBLE
-                status.visibility = View.VISIBLE
-
-                ReCalculate.visibility = View.VISIBLE
-                calculate_btn.visibility = View.GONE
-
-            }
-
-
-            else {
-                Toast.makeText(this, "please enter the valid height and weight", Toast.LENGTH_SHORT)
-                    .show()
-            }
-            ReCalculate.setOnClickListener {
-                ResetEverything()
-            }
+        calculateBtn.setOnClickListener {
+            bmi()
         }
 
+
+
     }
-    fun calculateBMI(height: Int, weight: Int): Float {
 
-        val Height_in_metre = height.toFloat() / 100
-        val BMI = weight.toFloat() / (Height_in_metre * Height_in_metre)
+    fun bmi() : Int {
+        if (etHeight.text.isNotEmpty() && etWeight.text.isNotEmpty()) {
+            val bmiVal = calculateBMI(etHeight.text.toString().toInt(), etWeight.text.toString().toInt())
 
-        return BMI
+            bmi.text = bmiVal.toString()
+            bmi.visibility = View.VISIBLE
+
+            if (bmiVal < 18.5) {
+                status.text = "Under Weight"
+                im.setImageResource(drawable.lean)
+
+            } else if (bmiVal >= 18.5 && bmiVal < 24.9) {
+                status.text = "Healthy"
+                im.setImageResource(drawable.healthy)
+
+            } else if (bmiVal >= 24.9 && bmiVal < 30) {
+                status.text = "Overweight"
+                im.setImageResource(drawable.overweight)
+
+            } else if (bmiVal >= 30) {
+                im.setImageResource(drawable.obisity)
+                status.text = "Suffering from Obesity"
+
+            }
+
+
+
+            im.visibility = View.VISIBLE
+            bmiTv.visibility = View.VISIBLE
+            status.visibility = View.VISIBLE
+
+            reCalculate.visibility = View.VISIBLE
+            reset.visibility = View.VISIBLE
+            calculateBtn.visibility = View.GONE
+
+        }
+
+        else {
+            Toast.makeText(this, "please enter the valid height and weight", Toast.LENGTH_SHORT)
+                .show()
+        }
+        reCalculate.setOnClickListener {
+            bmi()
+        }
+        reset.setOnClickListener{
+            resetEverything()
+        }
+        return 0
     }
-    fun ResetEverything() {
+    private fun calculateBMI(height: Int, weight: Int): Float {
 
-        calculate_btn.visibility = View.VISIBLE
-        ReCalculate.visibility = View.GONE
+        val heightInMetre = height.toFloat() / 100
 
+        return weight.toFloat() / (heightInMetre * heightInMetre)
+    }
+    private fun resetEverything() {
+
+        calculateBtn.visibility = View.VISIBLE
+        reCalculate.visibility = View.GONE
         im.visibility = View.GONE
         etHeight.text.clear()
         etWeight.text.clear()
         status.text = " "
         bmi.text = " "
-        bmi_tv.visibility = View.GONE
+        bmiTv.visibility = View.GONE
+        reset.visibility =View.GONE
     }
+   override fun onCreateOptionsMenu(menu : Menu?): Boolean {
+       menuInflater.inflate(R.menu.menu_br,menu)
+       return true
+   }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+
+            id.history ->{
+                startActivity(Intent(this,About::class.java))
+                true
+            }
+            else -> {true}
+        }
+    }
+
 }
